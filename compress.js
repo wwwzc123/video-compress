@@ -236,20 +236,20 @@ async function interactive(inputPath) {
   console.log('\n  🎬 视频压缩 — 选择设置\n');
 
   // 质量
-  console.log(`  ${color.bold('质量:')}`);
-  console.log(`    ${color.bold('1')}. high      高质量（文件较大）`);
-  console.log(`    ${color.bold('2')}. medium    中等（推荐）`);
-  console.log(`    ${color.bold('3')}. low       低质量（文件最小）`);
-  const q = await ask(`\n  ${color.muted('选 1/2/3')} [默认 2] = `);
+  console.log(`  质量:`);
+  console.log(`    1. high      高质量（文件较大）`);
+  console.log(`    2. medium    中等（推荐）`);
+  console.log(`    3. low       低质量（文件最小）`);
+  const q = await ask(`\n  选 1/2/3 [默认 2] = `);
 
   // 分辨率
-  console.log(`\n  ${color.bold('分辨率:')}`);
-  console.log(`    ${color.bold('1')}. 1080p     1920×1080`);
-  console.log(`    ${color.bold('2')}. 720p      1280×720`);
-  console.log(`    ${color.bold('3')}. 480p      854×480（推荐省空间）`);
-  console.log(`    ${color.bold('4')}. 360p      640×360`);
-  console.log(`    ${color.bold('5')}. 保持原分辨率`);
-  const s = await ask(`\n  ${color.muted('选 1/2/3/4/5')} [默认 3] = `);
+  console.log(`\n  分辨率:`);
+  console.log(`    1. 1080p     1920×1080`);
+  console.log(`    2. 720p      1280×720`);
+  console.log(`    3. 480p      854×480（推荐省空间）`);
+  console.log(`    4. 360p      640×360`);
+  console.log(`    5. 保持原分辨率`);
+  const s = await ask(`\n  选 1/2/3/4/5 [默认 3] = `);
 
   const qualityMap = { '1': 'high', '2': 'medium', '3': 'low' };
   const sizeMap = { '1': '1080p', '2': '720p', '3': '480p', '4': '360p', '5': null };
@@ -266,7 +266,7 @@ async function interactive(inputPath) {
   const label = [quality, size].filter(Boolean).join('_');
   const output = path.join(dir, `${name}_${label}${ext}`);
 
-  console.log(`\n  ${color.muted('━━━ 开始压缩 ━━━')}`);
+  console.log(`\n  ━━━ 开始压缩 ━━━`);
   await compress(inputPath, output, { crf, preset, size, bitrate: null });
 }
 
