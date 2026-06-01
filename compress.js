@@ -157,11 +157,17 @@ function compress(input, output, { crf, preset, size, bitrate }) {
       if (code === 0) {
         const outInfo = probe(output);
         const saved = info.size - outInfo.size;
+        const ratio = outInfo.size / info.size;
+        const barLen = 40;
+        const beforeBar = Math.max(1, Math.round(barLen));
+        const afterBar = Math.max(1, Math.round(barLen * ratio));
+        const savedBar = beforeBar - afterBar;
+
         console.log(`  ${''.padEnd(40, '─')}`);
         console.log(`  ✅ 完成`);
-        console.log(`  压缩前: ${fmtBytes(info.size)}`);
-        console.log(`  压缩后: ${fmtBytes(outInfo.size)}`);
-        console.log(`  节省了: ${fmtBytes(saved)}  (${pct(outInfo.size, info.size)})\n`);
+        console.log(`  压缩前 ${'█'.repeat(beforeBar)} ${fmtBytes(info.size)}`);
+        console.log(`  压缩后 ${'█'.repeat(afterBar)}${'░'.repeat(savedBar)} ${fmtBytes(outInfo.size)}  (${(ratio * 100).toFixed(0)}%)`);
+        console.log(`  节省了 ${fmtBytes(saved)}  (${pct(outInfo.size, info.size)})\n`);
         resolve(output);
       } else {
         reject(new Error(`ffmpeg 退出码: ${code}`));
