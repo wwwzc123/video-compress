@@ -1,0 +1,11 @@
+{
+  "name": "video-compress",
+  "version": "1.0.0",
+  "description": "视频压缩工具 — 把大视频压成小视频",
+  "bin": {
+    "vpress": "./compress.js"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

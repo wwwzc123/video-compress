@@ -1,6 +1,7 @@
+#!/usr/bin/env node
 // 视频压缩工具 — 用 FFmpeg 把大视频压成小视频
-// 用法: node compress.js <输入> [输出] [选项]
-// 需要安装 FFmpeg: https://ffmpeg.org/download.html
+// 用法: vpress <输入> [输出] [选项]
+// 需要安装 FFmpeg: winget install ffmpeg
 
 const fs = require('fs');
 const path = require('path');
@@ -203,7 +204,7 @@ function showHelp() {
   console.log(`
   视频压缩工具 — 基于 FFmpeg
 
-  用法: node compress.js <输入> [输出] [选项]
+  用法: vpress <输入> [输出] [选项]
 
   选项:
     --quality, -q   质量预设: high / medium / low
@@ -216,9 +217,9 @@ function showHelp() {
     low       CRF 35, 低质量，文件最小
 
   示例:
-    node compress.js 大视频.mp4
-    node compress.js input.mp4 output.mp4 -q low -s 720p
-    node compress.js input.mp4 -s 480p -b 500k
+    vpress 大视频.mp4
+    vpress input.mp4 output.mp4 -q low -s 720p
+    vpress input.mp4 -s 480p -b 500k
 
   需要 FFmpeg: https://ffmpeg.org/download.html
 `);
