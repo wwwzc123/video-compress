@@ -225,18 +225,71 @@ function showHelp() {
 `);
 }
 
+// ===== 交互式菜单 =====
+function ask(question) {
+  const readline = require('readline');
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise(resolve => rl.question(question, ans => { rl.close(); resolve(ans.trim()); }));
+}
+
+async function interactive(inputPath) {
+  console.log('\n  🎬 视频压缩 — 选择设置\n');
+
+  // 质量
+  console.log(`  ${color.bold('质量:')}`);
+  console.log(`    ${color.bold('1')}. high      高质量（文件较大）`);
+  console.log(`    ${color.bold('2')}. medium    中等（推荐）`);
+  console.log(`    ${color.bold('3')}. low       低质量（文件最小）`);
+  const q = await ask(`\n  ${color.muted('选 1/2/3')} [默认 2] = `);
+
+  // 分辨率
+  console.log(`\n  ${color.bold('分辨率:')}`);
+  console.log(`    ${color.bold('1')}. 1080p     1920×1080`);
+  console.log(`    ${color.bold('2')}. 720p      1280×720`);
+  console.log(`    ${color.bold('3')}. 480p      854×480（推荐省空间）`);
+  console.log(`    ${color.bold('4')}. 360p      640×360`);
+  console.log(`    ${color.bold('5')}. 保持原分辨率`);
+  const s = await ask(`\n  ${color.muted('选 1/2/3/4/5')} [默认 3] = `);
+
+  const qualityMap = { '1': 'high', '2': 'medium', '3': 'low' };
+  const sizeMap = { '1': '1080p', '2': '720p', '3': '480p', '4': '360p', '5': null };
+
+  const quality = qualityMap[q] || 'medium';
+  const size = sizeMap[s] || '480p';
+
+  const { crf, preset } = PRESETS[quality];
+
+  // 输出文件名
+  const ext = path.extname(inputPath);
+  const name = path.basename(inputPath, ext);
+  const dir = path.dirname(inputPath);
+  const label = [quality, size].filter(Boolean).join('_');
+  const output = path.join(dir, `${name}_${label}${ext}`);
+
+  console.log(`\n  ${color.muted('━━━ 开始压缩 ━━━')}`);
+  await compress(inputPath, output, { crf, preset, size, bitrate: null });
+}
+
 async function main() {
   const opts = parseArgs();
 
   if (!opts.input) {
-    console.error('\n  ✖ 请提供输入文件');
-    console.error('  用法: node compress.js <输入> [输出] [选项]\n');
+    console.error('\n  ✖ 请提供输入文件\n');
+    console.error('  vpress <视频文件>                    交互式菜单');
+    console.error('  vpress <视频文件> -q low -s 480p    命令行模式');
+    console.error('  vpress --help                       查看更多\n');
     process.exit(1);
   }
 
   if (!fs.existsSync(opts.input)) {
     console.error(`\n  ✖ 文件不存在: ${opts.input}\n`);
     process.exit(1);
+  }
+
+  // 没有指定任何选项 → 交互式菜单
+  const hasFlags = opts.quality !== 'medium' || opts.size || opts.bitrate;
+  if (!hasFlags && !opts.output) {
+    return interactive(opts.input);
   }
 
   // 自动生成输出文件名
